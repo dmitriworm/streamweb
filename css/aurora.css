@@ -1,0 +1,9 @@
+/* Moving coloured background animations */
+.aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.aurora::before, .aurora::after {
+  content: ""; position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%;
+  filter: blur(90px); opacity: 0.35; animation: drift 18s ease-in-out infinite alternate;
+}
+.aurora::before { background: #7c4dff; top: -25%; left: -15%; }
+.aurora::after { background: #00e5ff; bottom: -30%; right: -15%; animation-delay: -9s; }
+@keyframes drift { to { transform: translate(12%, 16%) scale(1.25); } }
