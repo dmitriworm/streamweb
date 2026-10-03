@@ -1,4 +1,4 @@
-/* YouTube trailer embed controller */
+/* Trailer modal — YouTube embed (anime), mp4 preview (movies), search link (series) */
 const Player = (() => {
   const modal = document.getElementById("modal");
   const host = document.getElementById("yt-player");
@@ -7,26 +7,31 @@ const Player = (() => {
   const watchBtn = document.getElementById("p-watch");
   let current = null;
 
-  async function open(item) {
+  function open(item) {
     current = item;
     titleEl.textContent = item.name;
-    metaEl.textContent = `${item.type === "movie" ? "Movie" : "Series"} · ${item.year || "—"} · ★ ${item.rating}`;
+    metaEl.textContent = `${item.type} · ${item.year} · ★ ${item.rating}`;
     updateWatchBtn();
-    host.innerHTML = `<div class="loading" style="height:100%">Loading trailer…</div>`;
-    modal.classList.add("open");
-    Ads.refresh(); // refresh the under-player ad slot
 
-    const key = await TMDB.trailerKey(item).catch(() => null);
-    if (!current || current.id !== item.id) return; // user closed meanwhile
-    host.innerHTML = key
-      ? `<iframe id="yt-player" src="https://www.youtube.com/embed/${key}?autoplay=1&rel=0"
-          title="${item.name} trailer" allowfullscreen></iframe>`
-      : `<div class="loading" style="height:100%">No official trailer found 😢</div>`;
+    const t = API.trailerFor(item);
+    if (t.kind === "youtube") {
+      const key = t.url.includes("embed=") ? t.url.split("embed=")[1] : t.url.replace("https://www.youtube.com/watch?v=", "");
+      host.innerHTML = `<iframe src="https://www.youtube.com/embed/${key}?autoplay=1&rel=0"
+        title="${item.name} trailer" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>`;
+    } else if (t.kind === "mp4") {
+      host.innerHTML = `<video src="${t.url}" controls autoplay style="width:100%;height:100%;background:#000"></video>`;
+    } else {
+      host.innerHTML = `<div class="loading" style="height:100%">
+        No direct trailer source for this one.<br><br>
+        <a href="${t.url}" target="_blank" rel="noopener" style="color:#00e5ff">▶ Watch trailer on YouTube</a></div>`;
+    }
+    modal.classList.add("open");
+    Ads.refresh();
   }
 
   function close() {
     modal.classList.remove("open");
-    host.innerHTML = ""; // stops playback
+    host.innerHTML = "";
     current = null;
   }
 
