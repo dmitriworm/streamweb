@@ -8,35 +8,33 @@
       b.classList.toggle("active", b.dataset.view === state.view));
   }
 
+  async function loadSection(view, title, fetcher) {
+    Views.loadingThen(title);
+    const items = await fetcher();
+    Views.grid(items, title, `${items.length} titles`, t => Player.open(t));
+  }
+
   async function render() {
     syncNav();
-    const v = state.view;
     try {
-      if (v === "web") {
+      if (state.view === "web") {
         await Views.web(cat => go(cat), item => Player.open(item));
-      } else if (v === "movies") {
-        Views.loadingThen("🎬 Movies — Trending This Week");
-        const items = await TMDB.trendingMovies();
-        Views.grid(items, "🎬 Movies — Trending This Week", `${items.length} titles`, t => Player.open(t));
-      } else if (v === "series") {
-        Views.loadingThen("📺 Series — Trending This Week");
-        const items = await TMDB.trendingTV();
-        Views.grid(items, "📺 Series — Trending This Week", `${items.length} titles`, t => Player.open(t));
-      } else if (v === "anime") {
-        Views.loadingThen("🌸 Anime — Popular Now");
-        const items = await TMDB.anime();
-        Views.grid(items, "🌸 Anime — Popular Now", `${items.length} titles`, t => Player.open(t));
-      } else if (v === "watchlist") {
+      } else if (state.view === "movies") {
+        await loadSection("movies", "🎬 Movies — Official Trailers", () => API.movies());
+      } else if (state.view === "series") {
+        await loadSection("series", "📺 Series — Top Rated", () => API.series());
+      } else if (state.view === "anime") {
+        await loadSection("anime", "🌸 Anime — Top on MyAnimeList", () => API.anime());
+      } else if (state.view === "watchlist") {
         Views.grid(state.watchlist, "★ Your Watchlist",
-          state.watchlist.length ? `${state.watchlist.length} saved titles` : "Nothing saved yet — star a title after watching a trailer.",
+          state.watchlist.length ? `${state.watchlist.length} saved titles`
+          : "Nothing saved yet — star a title after watching a trailer.",
           t => Player.open(t));
-      } else if (v === "search") {
-        Views.loadingThen(`🔍 Results for "${state.query}"`);
-        const items = await TMDB.search(state.query);
-        Views.grid(items, `🔍 Results for "${state.query}"`, `${items.length} matches`, t => Player.open(t));
+      } else if (state.view === "search") {
+        await loadSection("search", `🔍 Results for "${state.query}"`, () => API.search(state.query));
       }
     } catch (e) {
-      Views.header("⚠️ TMDB Error", "Could not reach TMDB. Check your API key in js/config.js. (" + e.message + ")");
+      Views.header("⚠️ API Error", "Could not load data. Check your connection. (" + e.message + ")");
     }
     Ads.refresh();
   }
