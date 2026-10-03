@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StreamWeb Trailers — Movies · Series · Anime</title>
-  <meta name="description" content="Discover movies, series and anime trailers in an animated spider-web interface. Powered by TMDB." />
+  <meta name="description" content="Discover movies, series and anime trailers in an animated spider-web interface. Keyless APIs: TVMaze, Jikan, iTunes." />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/aurora.css" />
@@ -30,16 +30,13 @@
   <!-- AD SLOT: header banner -->
   <div class="ad ad-banner" data-ad-slot="header"></div>
 
-  <div class="layout">
-    <main id="view"></main>
-    <aside class="rail">
-      <!-- AD SLOT: sidebar 300x600 -->
-      <div class="ad ad-rail" data-ad-slot="sidebar"></div>
-    </aside>
-  </div>
+  <main id="view" class="container"></main>
+
+  <!-- AD SLOT: footer banner (replaces the lopsided right rail) -->
+  <div class="ad ad-banner" data-ad-slot="sidebar"></div>
 
   <footer>
-    <p>StreamWeb Trailers · Data & images from <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a> · Trailers via YouTube</p>
+    <p>StreamWeb Trailers · Data: <a href="https://www.tvmaze.com/api" target="_blank" rel="noopener">TVMaze</a> · <a href="https://jikan.moe" target="_blank" rel="noopener">Jikan/MyAnimeList</a> · Apple iTunes · Trailers via YouTube</p>
   </footer>
 
   <!-- Trailer modal -->
@@ -59,7 +56,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/state.js"></script>
-  <script src="js/tmdb.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/ads.js"></script>
   <script src="js/web-map.js"></script>
   <script src="js/views.js"></script>
